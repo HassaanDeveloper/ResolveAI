@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS insert_document_chunk(uuid, uuid, integer, text, vector, jsonb, timestamptz);

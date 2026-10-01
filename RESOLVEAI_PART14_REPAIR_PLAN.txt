@@ -1,0 +1,231 @@
+RESOLVEAI — PART 14 EVALUATION REPAIR
+
+The existing Part 14 evaluation suite has been audited and found misleading. It reports 12/12 and all metrics at 1.00, but the evaluation runner relies heavily on mocks at the tool-registry boundary. Therefore it does not truly exercise the real ResolveAI workflow, real RAG retrieval, real Gemini calls, real Supabase/pgvector queries, or real approval state transitions.
+
+Your job is to REPAIR PART 14 ONLY.
+
+DO NOT:
+- Start Part 15.
+- Modify the frontend.
+- Initialize Git.
+- Add unnecessary infrastructure.
+- Delete existing unit/mock tests.
+- Make every test depend on external APIs.
+- Introduce LangChain, LangGraph, CrewAI, AutoGen, Docker, Kubernetes, Redis, Kafka, Celery, Qdrant, Elasticsearch, or heavy local models.
+
+FIRST inspect the existing Part 14 evaluation implementation and relevant production code before changing anything.
+
+GOAL
+Create a truthful TWO-LAYER evaluation system.
+
+LAYER A — existing fast unit/mock tests:
+Keep them. They are useful for deterministic business logic, policy rules, tool validation, orchestration, reliability, and state-machine logic.
+
+LAYER B — new REAL integration/evaluation suite:
+Add a small carefully selected suite that exercises the actual ResolveAI system.
+
+Never describe mocked tests as true E2E/integration evaluation.
+
+LAYER A — PRESERVE AND RECLASSIFY
+Keep existing tests. Do not delete policy, tool, workflow, RAG, reliability, or agent tests simply because they use mocks.
+
+Correct their classification/documentation if misleading. Fully mocked workflow tests should be described as mocked orchestration/integration-style tests, not true end-to-end tests.
+
+LAYER B — REAL INTEGRATION TESTS
+Use the existing architecture:
+- FastAPI
+- Python
+- Supabase PostgreSQL
+- pgvector
+- Gemini
+- existing ResolveAI services/tools/workflow
+- existing policy engine
+- existing approval system
+- existing reliability/idempotency mechanisms
+
+Suggested structure:
+backend/evaluation/integration/
+backend/evaluation/fixtures/
+backend/evaluation/real_runner.py
+
+Reuse existing conventions if better.
+
+TEST ISOLATION
+Use synthetic Northstar Commerce test data only.
+Make tests safe to rerun.
+Prefer dedicated test IDs, isolated records, deterministic fixtures, or cleanup.
+Inspect existing Supabase schema and seed/test fixtures first.
+Never touch real customer data.
+
+REAL GEMINI
+The real suite may use the configured Gemini API.
+Do NOT mock Gemini in the real evaluation path.
+Keep Gemini calls small.
+If GEMINI_API_KEY is missing:
+- mark affected tests SKIPPED
+- show the reason
+- never count SKIPPED as PASS
+- do not fake success
+Use the existing Gemini configuration/model.
+Normal unit tests must NOT require Gemini.
+
+REAL RAG
+At least one real evaluation must exercise:
+document -> chunking -> embedding -> Supabase/pgvector storage -> query embedding -> vector retrieval -> evidence -> grounded answer/citation
+
+Do not mock embeddings, pgvector queries, retrieval results, or evidence.
+Use a small deterministic policy document if needed.
+Verify evidence actually originates from the seeded document.
+Do not hardcode retrieved documents in the real RAG test.
+
+REAL POLICY
+Expected outcomes MUST be independently defined.
+Do NOT derive expected values from the production policy engine.
+
+Examples:
+refund <= $100 AND eligible -> ALLOW
+refund > $100 -> REQUIRES_APPROVAL
+policy violation -> DENY
+cancellation after shipment -> REQUIRES_APPROVAL
+unknown/high-risk action -> REQUIRES_APPROVAL
+
+Run the REAL policy engine and compare its result with independent expectations.
+
+REAL TOOL EXECUTION
+At least several real scenarios must execute actual registered tools.
+Do NOT mock tool_registry.execute in the real suite.
+
+Exercise:
+workflow -> tool registry -> actual tool -> actual Supabase operation -> result
+
+For side effects, use dedicated synthetic records and verify actual database state.
+ToolResult.success=True alone is not sufficient evidence.
+
+REAL APPROVAL FLOW
+At least one scenario must verify the actual approval lifecycle:
+high-value refund -> REQUIRES_APPROVAL -> approval request created -> persisted PENDING_APPROVAL -> actual approval service/path receives decision -> state changes -> execution occurs after approval -> final DB state verified.
+
+Do not merely check workflow.status == PENDING_APPROVAL.
+Do not add browser/UI testing in Part 14.
+
+REAL SIDE-EFFECT SAFETY
+Test:
+1. Allowed side effect executes.
+2. Denied action does NOT execute.
+3. Approval-required action does NOT execute before approval.
+4. Approved action executes.
+5. Duplicate execution using the same idempotency key does not create a duplicate side effect.
+
+Verify database state after each case.
+
+REAL GROUNDING / CITATION
+For the real suite, do not rely only on superficial string matching.
+Verify:
+1. Retrieved evidence exists.
+2. Evidence originated from the seeded knowledge document.
+3. Answer references retrieved evidence/citation correctly.
+4. Answer does not claim unsupported policy information.
+
+Keep checks practical and deterministic. Do not claim semantic quality beyond what is actually tested.
+
+REAL LLM PATH
+At least one real Gemini generation path must execute.
+Verify:
+- actual Gemini client/service is invoked
+- response is incorporated into actual workflow
+- response is grounded using retrieved evidence where applicable
+- deterministic policy/tool authorization remains authoritative
+
+The LLM must NOT become the authority for ALLOW/DENY.
+
+INDEPENDENT SCENARIO DEFINITIONS
+Create scenario definitions containing as appropriate:
+- scenario_id
+- description
+- input
+- expected_policy_decision
+- expected_approval_state
+- expected_side_effect
+- expected_final_state
+- expected_evidence/source
+
+Expected values must be independent of production outputs and mock ToolResults.
+
+METRICS
+Keep useful metrics where objectively measurable:
+- task_success
+- policy_compliance
+- tool_selection_accuracy
+- argument_accuracy
+- grounding
+- citation_correctness
+- human_escalation_accuracy
+- side_effect_safety
+
+If a metric cannot genuinely be evaluated, report NOT_EVALUATED.
+Do not force every metric to 1.00.
+
+RESULT FORMAT
+The real runner must report:
+Total scenarios, PASS, FAIL, SKIPPED.
+
+Per scenario:
+scenario_id, description, status, duration, important checks, failure reason if failed, skip reason if skipped.
+
+Never count SKIPPED as PASS.
+
+DOCUMENTATION
+Clearly document:
+Layer A = fast mocked/unit tests for deterministic regression and orchestration.
+Layer B = real integration/evaluation tests validating actual Supabase, pgvector, Gemini, tools, policy, approval, and side effects.
+
+Never claim existing mocked tests are real E2E evaluation.
+
+COST / API SAFETY
+Keep the real suite small.
+Avoid unnecessary Gemini calls.
+Use small deterministic fixtures.
+Normal unit command must remain free of external API requirements.
+Real tests should be explicitly invoked, e.g.:
+python -m evaluation.real_runner
+
+IMPORTANT TECHNICAL CONSTRAINT
+Before assuming how the application works, inspect actual source code.
+Reuse existing services and APIs.
+Do not invent nonexistent methods/endpoints.
+If a required real integration capability does not currently exist, implement only the minimum production-safe support needed inside Part 14, without changing architecture or starting Part 15.
+
+VALIDATION
+After implementation:
+1. Run existing unit/mock suite.
+2. Confirm it still passes.
+3. Run real integration suite if credentials are available.
+4. If credentials unavailable, confirm tests SKIP honestly.
+5. Inspect actual DB state for side-effect tests.
+6. Verify RAG reaches pgvector.
+7. Verify Gemini is actually called in the real LLM test.
+8. Verify approval state transition is persisted.
+9. Verify idempotency with duplicate execution.
+10. Search real integration tests for mocks of tool_registry.execute, retrieval_service, gemini_embedding_service, Gemini generation, and Supabase DB operations. Mocks may remain in Layer A, but the real suite must not bypass these components.
+
+FINAL REPORT
+When finished, STOP. Do NOT begin Part 15.
+
+Report:
+1. Files created/modified.
+2. Existing tests preserved.
+3. New real integration scenarios.
+4. Which tests use real Supabase.
+5. Which use real pgvector.
+6. Which use real Gemini.
+7. Which execute real tools.
+8. Which verify real approval transitions.
+9. Which verify real idempotency.
+10. Exact Layer A command.
+11. Exact Layer B command.
+12. Actual test results.
+13. Skipped tests and reasons.
+14. Remaining weaknesses.
+15. Explicitly state whether Part 14 is now honest enough to proceed to Part 15.
+
+Do not claim success merely because code was written. Only report what was actually executed and verified. Then STOP.

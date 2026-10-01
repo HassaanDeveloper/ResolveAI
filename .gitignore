@@ -1,0 +1,66 @@
+# ---------------------------------------------------------------------------
+# ResolveAI - root .gitignore
+#
+# SECURITY NOTE: the entries under "Environment / secrets" deliberately ignore
+# .env.example as well as the real .env files. The root .env.example previously
+# contained live credentials; ignoring the whole family guarantees no env file
+# can ever be staged, even if a real secret is pasted back into a template.
+#
+# TRADE-OFF: because .env.example is ignored, sanitized templates are NOT
+# committed. A new deployer will not receive them from the repository and must
+# be given the variable list out-of-band. If you would rather ship the sanitized
+# templates, delete the ".env.example" line below and instead rely on the
+# placeholders being real placeholders.
+# ---------------------------------------------------------------------------
+
+# --- Environment / secrets -------------------------------------------------
+# Real environment files (any directory, including backend/.env)
+.env
+.env.*
+# Sanitized templates - intentionally not tracked, see note above
+.env.example
+
+# --- Dependencies ----------------------------------------------------------
+node_modules/
+.venv/
+venv/
+env/
+__pypackages__/
+*.egg-info/
+.pytest_cache/
+
+# --- Next.js build output --------------------------------------------------
+.next/
+out/
+.turbo/
+.vercel/
+
+# --- Generic build output --------------------------------------------------
+build/
+dist/
+
+# --- Python bytecode / caches ---------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+.mypy_cache/
+.ruff_cache/
+
+# --- Test / coverage output ------------------------------------------------
+coverage/
+htmlcov/
+.pytest_cache/
+
+# --- Logs ------------------------------------------------------------------
+*.log
+logs/
+
+# --- Evaluator generated output (scenarios live in version control) --------
+backend/evaluation/integration/results/
+
+# --- OS / editor noise -----------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

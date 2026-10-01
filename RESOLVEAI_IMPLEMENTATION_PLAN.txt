@@ -1,0 +1,1821 @@
+# ResolveAI — Complete Implementation Plan for OpenCode
+
+## PROJECT IDENTITY
+
+You are building ResolveAI, a serious portfolio-grade Forward Deployed AI Engineer project.
+
+ResolveAI is an AI-Powered Business Resolution Engine for a fictional B2B/e-commerce company called Northstar Commerce.
+
+This is NOT a generic customer-support chatbot.
+
+The system receives an operational request, investigates business data, retrieves relevant company policies, makes a recommendation, passes that recommendation through deterministic policy enforcement, executes authorized actions safely, requests human approval for high-risk actions, verifies outcomes, records an audit trail, and produces a grounded explanation.
+
+The central workflow is:
+
+REQUEST
+→ UNDERSTAND
+→ INVESTIGATE
+→ RETRIEVE POLICY
+→ DECIDE
+→ POLICY CHECK
+→ APPROVAL IF REQUIRED
+→ EXECUTE
+→ VERIFY
+→ AUDIT
+→ RESPOND
+
+The project must demonstrate evidence that the developer understands Forward Deployed Engineering, AI systems architecture, agentic workflows, enterprise integrations, reliability, safety, evaluation, and measurable business outcomes.
+
+---
+
+# GLOBAL DEVELOPMENT RULES
+
+These rules apply to EVERY part.
+
+1. Work incrementally.
+2. Implement ONLY the requested part.
+3. Do not continue automatically to the next part.
+4. Inspect existing files before changing anything.
+5. Never unnecessarily overwrite working code.
+6. Keep the implementation lightweight.
+7. Do not use Docker.
+8. Do not use Kubernetes.
+9. Do not use Redis.
+10. Do not use Kafka.
+11. Do not use Celery.
+12. Do not use Qdrant.
+13. Do not use Elasticsearch.
+14. Do not use LangChain.
+15. Do not use LangGraph.
+16. Do not use CrewAI.
+17. Do not use AutoGen.
+18. Do not use heavy local models.
+19. Prefer free-tier-compatible services.
+20. Do not initialize Git unless explicitly requested by the user.
+21. Do not make commits unless explicitly requested.
+22. Never expose API keys or secrets.
+23. Use synthetic/demo business data only.
+24. Do not build unnecessary microservices.
+25. Prefer deterministic code where business rules or permissions are involved.
+26. The LLM must NEVER authorize itself to execute sensitive actions.
+27. Critical side-effect actions must support idempotency.
+28. Important actions must be verified after execution.
+29. Every important workflow event should eventually be auditable.
+30. Do not claim a feature is implemented unless it actually works.
+31. Validate each part before declaring it complete.
+32. At the end of each part, stop and wait for the user's next instruction.
+
+---
+
+# FINAL TECH STACK
+
+## Frontend
+- Next.js
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+
+## Backend
+- Python
+- FastAPI
+- Uvicorn
+
+## Database
+- Supabase PostgreSQL
+
+## Vector Search
+- Supabase pgvector
+
+## LLM
+- Google Gemini API using a currently supported free-tier-compatible model where possible
+
+## Embeddings
+- Gemini embeddings using the currently supported API/model
+
+## Agent Orchestration
+- Custom lightweight Python orchestration layer
+
+## Authentication
+- None for MVP
+
+## Observability
+- Structured JSON logging
+
+## Background Processing
+- FastAPI BackgroundTasks where genuinely useful
+
+## Evaluation
+- Custom Python evaluation harness
+
+## Deployment
+- Frontend: Vercel
+- Backend: genuinely free/lightweight hosting option available at implementation time
+- Do not require Docker
+
+---
+
+# TARGET REPOSITORY STRUCTURE
+
+resolveai/
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── lib/
+│   └── ...
+│
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── agents/
+│   │   ├── core/
+│   │   ├── rag/
+│   │   ├── tools/
+│   │   ├── policies/
+│   │   ├── workflows/
+│   │   ├── evaluation/
+│   │   ├── services/
+│   │   ├── models/
+│   │   └── main.py
+│   │
+│   ├── tests/
+│   └── requirements.txt
+│
+├── data/
+│   ├── documents/
+│   └── scenarios/
+│
+├── docs/
+│   ├── architecture.md
+│   └── decisions.md
+│
+├── README.md
+└── .env.example
+
+The exact structure may evolve only when there is a clear reason.
+
+---
+
+# MVP BUSINESS DOMAIN
+
+Company: Northstar Commerce
+
+ResolveAI should eventually support:
+
+- order status investigation
+- delayed shipment investigation
+- refund eligibility
+- refund processing
+- cancellation requests
+- account/order issues
+- policy-based exception handling
+- escalation to human operators
+
+Company knowledge documents should include synthetic versions of:
+
+- Refund Policy
+- Order Cancellation Policy
+- Shipping Policy
+- Escalation SOP
+- Customer Service SOP
+- Refund Approval Matrix
+- Exception Handling Policy
+
+Primary demonstration scenario:
+
+"Order #10482 hasn't arrived and the customer wants a refund."
+
+Expected flow:
+
+1. Understand intent.
+2. Extract order ID.
+3. Retrieve order information.
+4. Check shipment status.
+5. Retrieve relevant refund/shipping policies.
+6. Determine eligibility.
+7. Calculate refund.
+8. Run deterministic policy engine.
+9. Determine approval requirement.
+10. Execute only if authorized.
+11. Verify the result.
+12. Record audit events.
+13. Produce grounded final response.
+
+Example policy:
+
+- Refund <= $100 AND eligibility satisfied → automatic execution.
+- Refund > $100 → requires human approval.
+- Refund violating policy → reject.
+- Cancellation after shipment → escalation/review.
+- Unknown/high-risk action → human approval.
+
+---
+
+# DEVELOPMENT PARTS OVERVIEW
+
+PART 01 — Project Foundation
+PART 02 — Backend Foundation & Configuration
+PART 03 — Supabase Database Architecture
+PART 04 — Synthetic Northstar Commerce Data
+PART 05 — Controlled Business Tool System
+PART 06 — Deterministic Policy Engine
+PART 07 — Core Resolution Workflow Engine
+PART 08 — Knowledge Documents & RAG Ingestion
+PART 09 — RAG Retrieval & Evidence Layer
+PART 10 — Agent Intelligence Layer
+PART 11 — Human Approval Workflow
+PART 12 — Idempotency, Retries & Reliability
+PART 13 — Verification & Audit Trail
+PART 14 — Evaluation Harness
+PART 15 — Frontend Foundation
+PART 16 — Resolution Console
+PART 17 — Dashboard, Approval Queue & Knowledge UI
+PART 18 — Full Integration & Testing
+PART 19 — Deployment Preparation
+PART 20 — README, Portfolio Story & Final Polish
+
+IMPORTANT:
+The current user has already completed PART 01.
+Do not repeat PART 01 unless explicitly asked.
+
+---
+
+# PART 01 — PROJECT FOUNDATION
+
+STATUS: COMPLETED
+
+Objective:
+Create the initial lightweight project structure and minimal FastAPI health application.
+
+Expected accomplishments:
+
+- Root project structure created.
+- frontend/ directory exists but frontend is not implemented yet.
+- backend/ structure exists.
+- data/documents and data/scenarios directories exist.
+- docs directory exists.
+- .env.example exists.
+- README.md exists.
+- backend/app/main.py contains minimal FastAPI application.
+- Basic health endpoint exists initially.
+- backend/requirements.txt contains minimal dependencies.
+- docs/architecture.md exists.
+- docs/decisions.md exists.
+
+No Git initialization.
+No Docker.
+No external services.
+
+---
+
+# PART 02 — BACKEND FOUNDATION & CONFIGURATION
+
+STATUS: CURRENT PART TO IMPLEMENT WHEN USER REQUESTS PART 02
+
+## Objective
+
+Establish a clean production-oriented FastAPI backend foundation.
+
+Do NOT implement business logic, Supabase integration, Gemini integration, RAG, agents, or business tools yet.
+
+## Task 1 — Centralized Configuration
+
+Create:
+
+backend/app/core/config.py
+
+Create a lightweight centralized configuration system.
+
+Configuration should support:
+
+- APP_NAME
+- APP_ENV
+- DEBUG
+- API_PREFIX
+- HOST
+- PORT
+- CORS_ORIGINS
+
+Design it so future settings can be added for Gemini and Supabase.
+
+Do not require real credentials yet.
+Do not hardcode secrets.
+
+Use an appropriate lightweight approach.
+
+## Task 2 — API Router Structure
+
+Create:
+
+backend/app/api/
+├── __init__.py
+├── router.py
+└── routes/
+    ├── __init__.py
+    └── health.py
+
+Move/organize the health endpoint into the health route.
+
+Create a central API router.
+
+Use the configured API prefix.
+
+Target endpoint:
+
+GET /api/v1/health
+
+Response should contain:
+
+- status
+- application
+- environment
+
+Never expose secrets.
+
+## Task 3 — Application Lifecycle
+
+Use FastAPI's modern lifespan pattern.
+
+At startup:
+- Log that ResolveAI backend is starting.
+
+At shutdown:
+- Log that ResolveAI backend is shutting down.
+
+Do not connect external services yet.
+
+## Task 4 — Structured Logging Foundation
+
+Create:
+
+backend/app/core/logging.py
+
+Use Python standard logging.
+
+Prefer JSON-style structured logs without adding heavy infrastructure.
+
+Logs should include:
+
+- timestamp
+- level
+- logger
+- message
+
+Design it so request_id can later be included.
+
+Use logging during startup/shutdown.
+
+## Task 5 — Exception Foundation
+
+Create:
+
+backend/app/core/exceptions.py
+
+Implement a minimal application-specific exception pattern.
+
+Add appropriate centralized exception handling.
+
+Return consistent JSON errors.
+
+Do not expose stack traces to API users.
+
+Do not over-engineer.
+
+## Task 6 — Request ID Middleware
+
+Implement lightweight request tracing.
+
+For every HTTP request:
+
+1. Reuse X-Request-ID if supplied.
+2. Otherwise generate a UUID.
+3. Return X-Request-ID in the response header.
+4. Make the request ID available for future logging/workflow tracing.
+
+No external tracing services.
+
+## Task 7 — Health Validation
+
+Health endpoint should return approximately:
+
+{
+  "status": "healthy",
+  "application": "ResolveAI",
+  "environment": "development"
+}
+
+Verify:
+
+GET /api/v1/health
+
+Verify X-Request-ID is returned.
+
+Verify client-provided:
+
+X-Request-ID: test-123
+
+is returned unchanged.
+
+## Task 8 — Dependencies
+
+Update backend/requirements.txt only with dependencies genuinely required for this foundation.
+
+Do NOT add:
+
+- Gemini SDK
+- Supabase SDK
+- pgvector packages
+- LangChain
+- LangGraph
+- CrewAI
+- AutoGen
+- Redis
+- Celery
+
+## Expected Result
+
+Clean FastAPI application foundation with:
+
+- config
+- routers
+- lifespan
+- structured logging
+- request tracing
+- consistent errors
+
+Validate imports and endpoint behavior.
+
+STOP after Part 02.
+
+---
+
+# PART 03 — SUPABASE DATABASE ARCHITECTURE
+
+## Objective
+
+Design and implement the initial PostgreSQL schema for ResolveAI using Supabase.
+
+Do not implement RAG embeddings yet unless required by schema preparation.
+
+Do not connect Gemini yet.
+
+## Before implementation
+
+Inspect the current project.
+
+Read current Supabase documentation if needed for current SQL/pgvector setup.
+
+Do not invent credentials.
+
+## Core data entities
+
+Create a clean SQL migration strategy.
+
+Suggested database concepts:
+
+### customers
+Synthetic customer records.
+
+Possible fields:
+- id
+- external_customer_id
+- name
+- email
+- account_status
+- created_at
+
+### orders
+Synthetic order records.
+
+Possible fields:
+- id
+- order_number
+- customer_id
+- status
+- total_amount
+- currency
+- created_at
+- updated_at
+
+### shipments
+Possible fields:
+- id
+- order_id
+- carrier
+- tracking_number
+- status
+- estimated_delivery_date
+- delivered_at
+- updated_at
+
+### refunds
+Possible fields:
+- id
+- order_id
+- amount
+- currency
+- status
+- operation_id
+- created_at
+- processed_at
+
+### resolutions
+Represents an operational resolution request.
+
+Fields may include:
+- id
+- request_id
+- user_request
+- intent
+- status
+- created_at
+- updated_at
+
+### approval_requests
+Fields:
+- id
+- resolution_id
+- action_type
+- action_payload
+- reason
+- status
+- requested_at
+- decided_at
+- decided_by
+
+### audit_events
+Fields:
+- id
+- request_id
+- resolution_id
+- event_type
+- event_data
+- created_at
+
+### operations
+Used for idempotency.
+
+Fields:
+- operation_id
+- operation_type
+- status
+- result
+- created_at
+- updated_at
+
+Use appropriate foreign keys and indexes.
+
+## pgvector preparation
+
+Enable pgvector if supported in the target Supabase project.
+
+Prepare a knowledge document architecture for later:
+
+documents
+document_chunks
+
+Do not implement ingestion yet.
+
+Document chunks should eventually support metadata such as:
+
+- chunk_id
+- document_id
+- document_name
+- section
+- page
+- source
+- version
+- created_at
+
+Design embedding storage according to the actual embedding dimensionality chosen later.
+
+Do not guess an incompatible vector dimension.
+
+If the Gemini embedding model dimension must be known first, leave migration decisions clearly documented rather than inventing an incorrect schema.
+
+## Deliverables
+
+- SQL migration file(s)
+- schema documentation
+- indexes
+- constraints
+- clear status enums/check constraints where appropriate
+- instructions for applying migrations in Supabase
+
+Do not insert all synthetic data yet.
+
+Do not implement repository/service layers yet.
+
+STOP after Part 03.
+
+---
+
+# PART 04 — SYNTHETIC NORTHSTAR COMMERCE DATA
+
+## Objective
+
+Create realistic synthetic business data for demonstrations and testing.
+
+No real customer data.
+
+## Create seed data for:
+
+### Customers
+Approximately 15–30 synthetic customers.
+
+### Orders
+Approximately 30–50 synthetic orders.
+
+Include varied scenarios:
+
+- processing
+- shipped
+- delayed
+- delivered
+- cancelled
+- refunded
+
+Important demonstration orders should include scenarios such as:
+
+- #10482: delayed/not arrived scenario with a low-risk refund amount.
+- A high-value order requiring approval for refund.
+- An already-refunded order.
+- A delivered order outside policy conditions.
+- A shipped order where cancellation should be escalated.
+
+Use realistic but synthetic data.
+
+## Shipments
+
+Include statuses such as:
+
+- pending
+- in_transit
+- delayed
+- delivered
+- failed
+
+## Seed mechanism
+
+Create a deterministic seed strategy.
+
+It should be safe to rerun without unintentionally duplicating data.
+
+Document how to run it.
+
+Do not implement business tools yet.
+
+Validate that the data is accessible through the database.
+
+STOP after Part 04.
+
+---
+
+# PART 05 — CONTROLLED BUSINESS TOOL SYSTEM
+
+## Objective
+
+Implement controlled, typed, deterministic business tools.
+
+The tools are application capabilities, not unrestricted LLM functions.
+
+## Required initial tools
+
+Implement at minimum:
+
+get_order(order_id)
+get_customer(customer_id)
+get_shipping_status(order_id)
+search_company_policy(query) — temporary interface until RAG retrieval is implemented
+calculate_refund(order_id)
+issue_refund(order_id, amount)
+cancel_order(order_id)
+create_escalation(reason, context)
+
+## Tool requirements
+
+Every tool must have:
+
+- typed arguments
+- validation
+- deterministic behavior
+- structured outputs
+- clear success/failure responses
+
+Separate:
+
+### Read operations
+Examples:
+- get_order
+- get_customer
+- get_shipping_status
+
+### Side-effect operations
+Examples:
+- issue_refund
+- cancel_order
+- create_escalation
+
+Do not yet allow arbitrary LLM execution.
+
+The tool layer must be callable programmatically by workflows.
+
+## Important safety rule
+
+The existence of a tool does NOT mean an agent may automatically execute it.
+
+Authorization will be handled later through policy and workflow layers.
+
+For side-effect tools, design interfaces with operation_id/idempotency support in mind.
+
+Do not implement full idempotency yet unless necessary for safe interfaces.
+
+## Validation
+
+Add basic tests for tool inputs and outputs.
+
+STOP after Part 05.
+
+---
+
+# PART 06 — DETERMINISTIC POLICY ENGINE
+
+## Objective
+
+Build the deterministic business policy engine.
+
+This is one of the project's most important FDE differentiators.
+
+The LLM may recommend an action.
+
+The deterministic policy engine decides:
+
+ALLOW
+DENY
+REQUIRES_APPROVAL
+
+The LLM must NEVER override policy decisions.
+
+## Initial rules
+
+Implement rules such as:
+
+1. Refund <= $100 AND policy eligibility satisfied
+   → ALLOW automatic execution
+
+2. Refund > $100
+   → REQUIRES_APPROVAL
+
+3. Refund violating eligibility requirements
+   → DENY
+
+4. Cancellation after shipment
+   → REQUIRES_APPROVAL or escalation according to defined business policy
+
+5. Unknown/high-risk actions
+   → REQUIRES_APPROVAL
+
+## Policy engine requirements
+
+Input should include relevant structured facts, for example:
+
+- action type
+- order status
+- shipment status
+- refund amount
+- eligibility result
+- policy evidence
+
+Output should be structured:
+
+{
+  "decision": "ALLOW | DENY | REQUIRES_APPROVAL",
+  "reason": "...",
+  "policy_rule": "...",
+  "risk_level": "LOW | MEDIUM | HIGH"
+}
+
+Keep rules deterministic and testable.
+
+Do not ask Gemini to enforce policies.
+
+Add comprehensive tests for:
+
+- allowed refund
+- approval-required refund
+- denied refund
+- cancellation after shipment
+- unknown action
+
+STOP after Part 06.
+
+---
+
+# PART 07 — CORE RESOLUTION WORKFLOW ENGINE
+
+## Objective
+
+Build the deterministic workflow skeleton for a business resolution.
+
+At this stage, the workflow can use rule-based/simple intent handling before Gemini intelligence is added.
+
+The goal is to prove the full operational state machine.
+
+## Workflow concept
+
+REQUEST
+→ UNDERSTAND
+→ INVESTIGATE
+→ RETRIEVE POLICY
+→ DECIDE
+→ POLICY CHECK
+→ APPROVAL IF REQUIRED
+→ EXECUTE
+→ VERIFY
+→ AUDIT
+→ RESPOND
+
+## Create explicit workflow state
+
+Suggested fields:
+
+- request_id
+- resolution_id
+- user_request
+- intent
+- customer_id
+- order_id
+- retrieved_documents
+- tool_calls
+- policy_result
+- approval_status
+- action_result
+- verification_result
+- final_status
+- errors
+
+Do not rely on hidden LLM memory.
+
+## Initial workflow support
+
+Focus first on:
+
+Delayed shipment + refund request.
+
+The workflow should:
+
+1. Receive request.
+2. Identify/extract order ID using deterministic parsing initially.
+3. Retrieve order.
+4. Retrieve shipping status.
+5. Retrieve/ref reference relevant policy interface.
+6. Calculate refund.
+7. Run policy engine.
+8. If allowed, prepare execution.
+9. If approval required, transition to pending approval.
+10. If denied, produce rejection.
+11. Return structured workflow result.
+
+Do not implement Gemini agent yet.
+
+Do not implement actual RAG retrieval yet.
+
+The workflow should still work with deterministic placeholders/interfaces.
+
+Create API endpoint(s) to trigger a resolution request.
+
+Validate multiple scenarios.
+
+STOP after Part 07.
+
+---
+
+# PART 08 — KNOWLEDGE DOCUMENTS & RAG INGESTION
+
+## Objective
+
+Create realistic Northstar Commerce policy documents and implement ingestion.
+
+## Documents
+
+Create synthetic documents covering:
+
+1. Refund Policy
+2. Order Cancellation Policy
+3. Shipping Policy
+4. Escalation SOP
+5. Customer Service SOP
+6. Refund Approval Matrix
+7. Exception Handling Policy
+
+Documents should contain realistic sections, rules, exceptions, and version information.
+
+## Ingestion pipeline
+
+Document
+→ Parse
+→ Clean
+→ Structure
+→ Chunk
+→ Metadata
+→ Gemini Embedding
+→ Supabase pgvector
+
+## Chunking requirements
+
+Avoid arbitrary character slicing where practical.
+
+Use semantic/structure-aware chunking.
+
+Preserve:
+
+- document name
+- section
+- source
+- version
+- page if applicable
+- created_at
+
+## Important
+
+Before implementing Gemini SDK usage, check current official Gemini API documentation/model compatibility.
+
+Use environment variables.
+
+Do not place keys in source code.
+
+Create an ingestion script or controlled ingestion service.
+
+Validate:
+
+- documents are parsed
+- chunks are created
+- metadata is stored
+- embeddings are stored successfully
+
+Do not build the complete agent yet.
+
+STOP after Part 08.
+
+---
+
+# PART 09 — RAG RETRIEVAL & EVIDENCE LAYER
+
+## Objective
+
+Implement serious but lightweight retrieval.
+
+## Retrieval pipeline
+
+User query
+→ Query processing
+→ Gemini embedding
+→ pgvector similarity search
+→ Candidate chunks
+→ Context construction
+→ Evidence objects
+
+## Requirements
+
+Return structured evidence, not only raw text.
+
+Each retrieved result should expose:
+
+- document name
+- section
+- source
+- version
+- relevance score where practical
+- chunk content
+
+Implement search_company_policy(query) using the actual RAG system.
+
+If time and complexity allow, add lightweight lexical/exact-match retrieval.
+
+Do not sacrifice working semantic retrieval for unnecessary hybrid complexity.
+
+## Grounding
+
+The workflow must later be able to cite evidence used for decisions.
+
+Design retrieval output for citation traceability.
+
+## Validation
+
+Test queries such as:
+
+- refund eligibility for delayed shipment
+- refund approval threshold
+- cancellation after shipment
+- escalation requirements
+
+STOP after Part 09.
+
+---
+
+# PART 10 — AGENT INTELLIGENCE LAYER
+
+## Objective
+
+Introduce Gemini as a bounded intelligence layer.
+
+Do NOT create an unrestricted autonomous agent.
+
+## Principle
+
+Use the LLM for:
+
+- intent interpretation
+- query understanding
+- extracting relevant entities
+- selecting among legitimate investigation steps
+- synthesizing evidence
+- generating grounded explanations
+
+Use deterministic code for:
+
+- authorization
+- policy enforcement
+- money calculations
+- state transitions
+- idempotency
+- validation
+- final action permissions
+
+## Bounded agent loop
+
+Conceptually:
+
+User Request
+→ Analyze
+→ Select legitimate next step
+→ Execute controlled read tool
+→ Observe result
+→ Decide next step
+→ Final answer
+
+Add:
+
+- MAX_STEPS
+- TIMEOUT
+- TOOL_ERROR_LIMIT
+
+Prevent infinite loops.
+
+## Tool access
+
+The agent may request a tool.
+
+The workflow/controller independently validates whether that tool can be used.
+
+Side-effect tools must never bypass policy/workflow authorization.
+
+## Structured LLM outputs
+
+Prefer validated structured outputs where practical.
+
+The agent should produce machine-readable recommendations, not uncontrolled prose.
+
+## Initial scope
+
+Integrate agent intelligence into the existing delayed shipment/refund workflow.
+
+Validate that:
+
+- order ID extraction works
+- intent classification works
+- evidence is used
+- tools are selected appropriately
+- the agent cannot self-authorize side effects
+
+STOP after Part 10.
+
+---
+
+# PART 11 — HUMAN APPROVAL WORKFLOW
+
+## Objective
+
+Implement actual human-in-the-loop application state.
+
+Do NOT merely tell the LLM to "ask a human."
+
+## Required states
+
+PENDING_APPROVAL
+APPROVED
+REJECTED
+EXECUTED
+FAILED
+
+Use explicit state transitions.
+
+## Flow
+
+High-risk request
+→ Policy Engine returns REQUIRES_APPROVAL
+→ Create approval request
+→ Workflow stops safely
+→ Human reviews
+→ Approve or reject
+→ If approved, continue authorized workflow
+→ Execute
+→ Verify
+→ Audit
+
+## Requirements
+
+Create backend endpoints/services for:
+
+- listing pending approvals
+- viewing approval details
+- approving
+- rejecting
+
+Approval should capture:
+
+- action
+- amount/payload
+- reason
+- policy rule
+- requester/time
+- decision
+- approver identifier placeholder for MVP
+
+Do not add authentication yet.
+
+Make state transitions deterministic and validated.
+
+Test:
+
+- high-value refund creates pending approval
+- action does not execute before approval
+- approved action can continue
+- rejected action does not execute
+
+STOP after Part 11.
+
+---
+
+# PART 12 — IDEMPOTENCY, RETRIES & RELIABILITY
+
+## Objective
+
+Add production-oriented reliability controls.
+
+## Idempotency
+
+Critical side effects:
+
+- issue_refund
+- cancel_order
+- future notification actions
+
+Use operation_id.
+
+Example:
+
+refund-order-10482-74.99
+
+Before execution:
+
+Already executed?
+→ Return previous result.
+
+Not executed?
+→ Execute.
+
+Store operation state.
+
+Prevent duplicate side effects on retries.
+
+## Retries
+
+Implement lightweight retries only for transient/read-safe operations.
+
+Pattern:
+
+attempt 1
+→ failure
+→ short backoff
+→ attempt 2
+→ failure
+→ attempt 3
+→ mark failed/escalate
+
+Do NOT blindly retry dangerous side-effect operations.
+
+Differentiate:
+
+READ operations
+
+from
+
+SIDE-EFFECT operations.
+
+## Timeouts
+
+Add practical timeout boundaries around external/LLM/database operations where appropriate.
+
+## Failure handling
+
+Use structured errors.
+
+Track retry counts.
+
+Ensure workflows transition to FAILED safely when unrecoverable.
+
+## Tests
+
+Test:
+
+- duplicate refund request
+- transient read failure
+- failed operation
+- timeout handling
+- side effect not duplicated
+
+STOP after Part 12.
+
+---
+
+# PART 13 — VERIFICATION & AUDIT TRAIL
+
+## Objective
+
+Ensure important actions are verified and auditable.
+
+## Verification
+
+After important side-effect actions:
+
+Execute action
+→ tool reports success
+→ independently verify business state
+→ mark executed only after verification
+
+Example:
+
+issue_refund()
+→ success response
+→ retrieve/check refund status
+→ confirmed
+→ mark EXECUTED
+
+Never assume tool success equals business success.
+
+## Audit trail
+
+Record important events:
+
+- request received
+- intent identified
+- document retrieved
+- tool called
+- policy evaluated
+- approval requested
+- approval granted/rejected
+- action executed
+- action verified
+- workflow failed
+- final response
+
+Audit events should include:
+
+- request_id
+- resolution_id where applicable
+- event type
+- structured event data
+- timestamp
+
+## Requirements
+
+Make it possible to reconstruct:
+
+"Why did ResolveAI make this decision?"
+
+Include:
+
+- evidence
+- tools
+- policy result
+- approval state
+- action result
+- verification result
+
+Create API access for retrieving workflow/resolution traces where useful.
+
+STOP after Part 13.
+
+---
+
+# PART 14 — EVALUATION HARNESS
+
+## Objective
+
+Build a custom Python evaluation system.
+
+Do not fabricate metrics.
+
+## Scenario format
+
+Each scenario should support:
+
+- input
+- expected_intent
+- expected_tools
+- expected_arguments
+- expected_policy_result
+- expected_action
+- expected_final_state
+- expected_grounding
+
+## Initial scenario count
+
+Start with a manageable number such as 20–30 robust scenarios.
+
+Expand toward 50–100 if time/resources permit.
+
+## Evaluate
+
+### Task Success
+Was the request resolved correctly?
+
+### Tool Selection Accuracy
+Were appropriate tools selected?
+
+### Argument Accuracy
+Were parameters correct?
+
+### Policy Compliance
+Did deterministic rules hold?
+
+### Grounding
+Was the decision supported by company information?
+
+### Citation Correctness
+Does evidence support the claim?
+
+### Human Escalation Accuracy
+Was approval requested when necessary?
+
+### Side-effect Safety
+Were unauthorized actions avoided?
+
+### Latency
+Measure end-to-end time.
+
+### Failure Rate
+Measure failed workflows.
+
+## Deliverables
+
+- scenario dataset
+- evaluation runner
+- metric calculation
+- machine-readable results
+- human-readable summary
+
+Do not invent percentages.
+
+Run the benchmark and save actual results.
+
+If a metric is weak, report it honestly.
+
+STOP after Part 14.
+
+---
+
+# PART 15 — FRONTEND FOUNDATION
+
+## Objective
+
+Initialize the frontend only after the backend core is functional.
+
+Use:
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+
+Keep dependencies lightweight.
+
+## Frontend requirements
+
+Create:
+
+- application layout
+- API client layer
+- shared types where appropriate
+- environment configuration
+- navigation shell
+- loading/error states
+
+No authentication for MVP.
+
+## Initial pages
+
+Prepare routes for:
+
+- Dashboard
+- Resolution Console
+- Approval Queue
+- Knowledge Base
+- Evaluation
+
+Do not build all functionality yet.
+
+Focus on professional structure.
+
+The UI should emphasize workflow traceability, not flashy animations.
+
+STOP after Part 15.
+
+---
+
+# PART 16 — RESOLUTION CONSOLE
+
+## Objective
+
+Build the project's primary demonstration interface.
+
+The Resolution Console should show the full business resolution journey.
+
+## Display
+
+User Request
+↓
+Agent Investigation
+↓
+Retrieved Evidence
+↓
+Tool Calls
+↓
+Policy Decision
+↓
+Approval
+↓
+Action
+↓
+Verification
+↓
+Final Answer
+
+## Features
+
+- request input
+- submit resolution
+- loading/progress states
+- workflow trace visualization
+- evidence display
+- tool call results
+- policy decision
+- approval status
+- final grounded answer
+
+Use the backend API.
+
+Do not fake workflow results if backend integration is available.
+
+Prioritize clarity and traceability.
+
+STOP after Part 16.
+
+---
+
+# PART 17 — DASHBOARD, APPROVAL QUEUE & KNOWLEDGE UI
+
+## Objective
+
+Build supporting operational interfaces.
+
+## Dashboard
+
+Show real metrics where available:
+
+- requests processed
+- successful resolutions
+- pending approvals
+- failed resolutions
+- average resolution time
+
+Do not invent data.
+
+## Approval Queue
+
+Show pending high-risk actions.
+
+Support:
+
+- view details
+- approve
+- reject
+
+Connect to backend.
+
+## Knowledge Base
+
+Show:
+
+- company documents
+- ingestion status
+- versions
+- basic metadata
+
+## Evaluation Page
+
+Show actual benchmark results.
+
+Examples:
+
+- test scenario count
+- task success
+- tool selection accuracy
+- policy compliance
+- grounding rate
+- escalation accuracy
+- latency
+- failure rate
+
+Do not claim metrics without actual evaluation output.
+
+STOP after Part 17.
+
+---
+
+# PART 18 — FULL INTEGRATION & TESTING
+
+## Objective
+
+Test ResolveAI as one complete system.
+
+## Primary demo tests
+
+### Scenario A — Low-risk delayed shipment refund
+
+Expected:
+
+- investigation succeeds
+- relevant policy retrieved
+- refund calculated
+- policy allows
+- refund executes
+- verification succeeds
+- audit trail exists
+
+### Scenario B — High-risk refund
+
+Expected:
+
+- policy returns REQUIRES_APPROVAL
+- action is NOT executed
+- approval request is created
+- after approval, action executes
+- verification succeeds
+
+### Scenario C — Policy denial
+
+Expected:
+
+- action denied
+- no side effect
+- grounded explanation returned
+
+### Scenario D — Retry/idempotency
+
+Expected:
+
+- duplicate request does not duplicate refund
+
+### Scenario E — Failure
+
+Expected:
+
+- controlled failure
+- safe final state
+- audit event
+- useful error explanation without leaking secrets
+
+## Testing
+
+Add automated tests where practical.
+
+Test:
+
+- API
+- policies
+- tools
+- workflow states
+- approval transitions
+- idempotency
+- critical integration paths
+
+Fix actual bugs found.
+
+Do not add random features.
+
+STOP after Part 18.
+
+---
+
+# PART 19 — DEPLOYMENT PREPARATION
+
+## Objective
+
+Prepare the simplest working deployment.
+
+## Requirements
+
+Frontend:
+
+- prepare for Vercel deployment
+
+Backend:
+
+- choose a genuinely available free/lightweight hosting option at implementation time
+- no Docker requirement
+
+## Before choosing services
+
+Check current availability and deployment requirements.
+
+Do not assume outdated free tiers.
+
+## Deployment preparation
+
+Create:
+
+- production environment variable documentation
+- CORS configuration
+- API base URL configuration
+- health checks
+- startup configuration
+- deployment instructions
+
+Do not expose secrets.
+
+Test production-like configuration locally where practical.
+
+Deploy only after user explicitly provides credentials/access or requests deployment.
+
+STOP after Part 19.
+
+---
+
+# PART 20 — README, PORTFOLIO STORY & FINAL POLISH
+
+## Objective
+
+Turn ResolveAI into a strong portfolio artifact.
+
+## Final README structure
+
+1. Problem
+2. Customer workflow
+3. Why existing workflow is inefficient
+4. Solution
+5. Architecture
+6. Demo
+7. Agent workflow
+8. RAG architecture
+9. Tool architecture
+10. Policy engine
+11. Human-in-the-loop
+12. Reliability mechanisms
+13. Evaluation methodology
+14. Actual benchmark results
+15. Failure cases
+16. Trade-offs
+17. Future improvements
+18. Local setup
+19. Deployment
+
+## Core positioning statement
+
+ResolveAI is a policy-aware AI business resolution engine that combines retrieval, agentic tool use, deterministic policy enforcement, human approval, verified execution, and evaluation to automate operational workflows safely.
+
+## Documentation
+
+Update architecture.md with actual implementation.
+
+Update decisions.md with major trade-offs.
+
+Document:
+
+- Why RAG was chosen
+- Why tools were used
+- Why some actions are deterministic
+- Why the LLM cannot authorize itself
+- Why high-risk actions require approval
+- How idempotency prevents duplicate actions
+- How tool selection is evaluated
+- How task success is measured
+- How failed resolutions are debugged
+- How the system could scale
+
+## Interview story
+
+Prepare documentation around:
+
+Customer problem
+↓
+Discovery
+↓
+Requirements
+↓
+Constraints
+↓
+Architecture
+↓
+Implementation
+↓
+Evaluation
+↓
+Failure
+↓
+Iteration
+↓
+Business outcome
+
+## Final quality checks
+
+- no secrets committed
+- no fake metrics
+- no broken README claims
+- no unnecessary dependencies
+- clean project structure
+- critical workflows work
+- evaluation results are real
+- UI is professional
+- setup instructions work
+
+STOP after Part 20.
+
+---
+
+# FINAL SUCCESS CRITERION
+
+ResolveAI is NOT complete merely because localhost works.
+
+The project should demonstrate:
+
+Realistic workflow
++
+RAG
++
+Controlled tools
++
+Deterministic policy engine
++
+Human approval
++
+Verified execution
++
+Idempotency
++
+Failure handling
++
+Audit trail
++
+Evaluation
++
+Observability
++
+Professional UI
++
+Deployment preparation
++
+Strong README
+
+However:
+
+A smaller working system is better than a giant unfinished architecture.
+
+Always prioritize working core functionality over feature count.
+
+---
+
+# HOW TO WORK WITH THIS FILE
+
+The user will instruct you with messages such as:
+
+"Read RESOLVEAI_IMPLEMENTATION_PLAN.txt and implement Part 02 only."
+
+When that happens:
+
+1. Read this file.
+2. Inspect the existing project.
+3. Find the requested part.
+4. Implement ONLY that part.
+5. Validate it.
+6. Report:
+   - files changed
+   - dependencies added
+   - commands run
+   - validation results
+   - errors/fixes
+7. STOP.
+
+Never automatically continue to another part.
+
+You are an implementation partner, not an autonomous project generator.
