@@ -16,8 +16,8 @@ import { cn } from "@/lib/utils";
  */
 const EXTERNAL_LINKS: Record<string, string> = {
   architecture: "",
-  github: "",
-  linkedin: "",
+  github: "https://github.com/HassaanDeveloper/ResolveAI",
+  linkedin: "https://www.linkedin.com/in/muhammad-hassaan-a22693269",
 };
 
 const CORE_LOOP = [
@@ -565,23 +565,27 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              {/* Placeholder block: swap in real URLs, then delete this container. */}
               <div>
-                <SectionLabel>TODO — add links</SectionLabel>
+                <SectionLabel>Elsewhere</SectionLabel>
                 <ul className="mt-4 space-y-2.5">
-                  {Object.keys(EXTERNAL_LINKS).map((key) => (
-                    <li key={key}>
-                      <span
-                        className="text-body-sm text-muted-foreground"
-                        title={`TODO: set EXTERNAL_LINKS.${key}`}
-                      >
-                        {key}
-                        <span className="ml-2 text-label text-muted-foreground">
-                          add URL
-                        </span>
-                      </span>
-                    </li>
-                  ))}
+                  {[
+                    { key: "github", label: "GitHub" },
+                    { key: "linkedin", label: "LinkedIn" },
+                  ].map(({ key, label }) =>
+                    EXTERNAL_LINKS[key] ? (
+                      <li key={key}>
+                        <a
+                          href={EXTERNAL_LINKS[key]}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="inline-flex items-center gap-1.5 text-body-sm text-muted-foreground transition-colors duration-200 hover:text-foreground focus-visible:text-foreground motion-reduce:transition-none"
+                        >
+                          {label}
+                          <ArrowUpRight aria-hidden="true" className="h-3 w-3" />
+                        </a>
+                      </li>
+                    ) : null
+                  )}
                 </ul>
               </div>
             </nav>
@@ -589,9 +593,17 @@ export default function LandingPage() {
 
           <Divider />
 
-          <p className="pt-6 text-label text-muted-foreground">
-            Evidence, policy, controlled action, verification, audit
-          </p>
+          <div className="flex flex-col gap-2 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-label text-muted-foreground">
+              Evidence, policy, controlled action, verification, audit
+            </p>
+            <p className="text-label text-muted-foreground">
+              Made by{" "}
+              <span className="font-medium text-foreground">
+                Muhammad Hassaan
+              </span>
+            </p>
+          </div>
         </div>
       </footer>
     </div>

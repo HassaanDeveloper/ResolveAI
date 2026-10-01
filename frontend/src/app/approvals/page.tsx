@@ -108,6 +108,38 @@ export default function ApprovalsPage() {
 
   const approvals = data?.approvals || [];
 
+  const pendingApprovals = approvals.filter((a) => a.status === "pending");
+
+  const approvalFields = (approval: ApprovalListItem) => (
+    <dl className="grid grid-cols-[minmax(0,7rem)_minmax(0,1fr)] gap-x-3 gap-y-2">
+      <dt className="text-label">ID</dt>
+      <dd className="text-mono text-body-sm break-all">{approval.id}</dd>
+      <dt className="text-label">Resolution</dt>
+      <dd className="text-mono text-body-sm break-all">{approval.resolution_id}</dd>
+      <dt className="text-label">Action</dt>
+      <dd className="text-body-sm capitalize">
+        {approval.action_type.replace(/_/g, " ")}
+      </dd>
+      <dt className="text-label">Reason</dt>
+      <dd className="text-body-sm break-words">{approval.reason}</dd>
+      <dt className="text-label">Risk Level</dt>
+      <dd>
+        <RiskBadge
+          level={approval.risk_level as "LOW" | "MEDIUM" | "HIGH"}
+          size="sm"
+        />
+      </dd>
+      <dt className="text-label">Status</dt>
+      <dd>
+        <StatusBadge status={approval.status} size="sm" />
+      </dd>
+      <dt className="text-label">Requested</dt>
+      <dd className="text-mono text-body-sm text-muted-foreground">
+        {format(new Date(approval.requested_at), "PPp")}
+      </dd>
+    </dl>
+  );
+
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -148,7 +180,63 @@ export default function ApprovalsPage() {
           </CardTitle>
         </CardHeader>
 <CardContent>
-          <div className="overflow-x-auto">
+          {/* Mobile: stacked cards, one per approval, actions pinned to the bottom. */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {approvals.length === 0 ? (
+              <EmptyState
+                title="No approvals found"
+                description={
+                  filterStatus
+                    ? `No approvals with status "${filterStatus}"`
+                    : "No pending approvals at this time."
+                }
+                icon={<ClipboardList />}
+              />
+            ) : (
+              pendingApprovals.map((approval) => (
+                <div
+                  key={approval.id}
+                  className="flex flex-col gap-3 rounded-lg border bg-card p-4"
+                >
+                  {approvalFields(approval)}
+                  <div className="flex flex-col gap-2 border-t pt-3 sm:flex-row sm:flex-wrap">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="min-h-11 w-full sm:w-auto"
+                      onClick={() => router.push(`/approvals/${approval.id}`)}
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
+                      View Detail
+                    </Button>
+                    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                      <LoadingButton
+                        isLoading={decideMutation.isPending}
+                        onClick={() => handleApprove(approval.id)}
+                        variant="default"
+                        size="sm"
+                        className="min-h-11 w-full"
+                      >
+                        Approve
+                      </LoadingButton>
+                      <LoadingButton
+                        isLoading={decideMutation.isPending}
+                        onClick={() => handleReject(approval.id)}
+                        variant="destructive"
+                        size="sm"
+                        className="min-h-11 w-full"
+                      >
+                        Reject
+                      </LoadingButton>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Desktop: fixed-column table. */}
+          <div className="hidden overflow-x-auto md:block">
             <Table style={{ tableLayout: "fixed" }}>
               <TableHeader>
                 <TableRow>
@@ -237,7 +325,73 @@ export default function ApprovalsPage() {
           <CardTitle>All Approvals ({approvals.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          {/* Mobile: stacked cards, one per approval. */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {approvals.length === 0 ? (
+              <EmptyState
+                title="No approvals found"
+                description="No approvals have been recorded yet."
+                icon={<ClipboardList />}
+              />
+            ) : (
+              approvals.map((approval) => (
+                <div
+                  key={approval.id}
+                  className="flex flex-col gap-3 rounded-lg border bg-card p-4"
+                >
+                  {approvalFields(approval)}
+                  {approval.status === "pending" ? (
+                    <div className="flex flex-col gap-3 border-t pt-3 sm:flex-row sm:flex-wrap">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="min-h-11 w-full sm:w-auto"
+                        onClick={() => router.push(`/approvals/${approval.id}`)}
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Detail
+                      </Button>
+                      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                        <LoadingButton
+                          isLoading={decideMutation.isPending}
+                          onClick={() => handleApprove(approval.id)}
+                          variant="default"
+                          size="sm"
+                          className="min-h-11 w-full"
+                        >
+                          Approve
+                        </LoadingButton>
+                        <LoadingButton
+                          isLoading={decideMutation.isPending}
+                          onClick={() => handleReject(approval.id)}
+                          variant="destructive"
+                          size="sm"
+                          className="min-h-11 w-full"
+                        >
+                          Reject
+                        </LoadingButton>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-t pt-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="min-h-11 w-full sm:w-auto"
+                        onClick={() => router.push(`/approvals/${approval.id}`)}
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Detail
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Desktop: fixed-column table. */}
+          <div className="hidden overflow-x-auto md:block">
             <Table style={{ tableLayout: "fixed" }}>
               <TableHeader>
                 <TableRow>

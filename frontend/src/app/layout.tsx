@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navigation } from "@/components/layout/navigation";
+import { Footer } from "@/components/layout/footer";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
             <main className="flex-1 p-4 md:p-6 lg:p-8">
               {children}
             </main>
+            <Footer />
           </div>
         </Providers>
       </body>
