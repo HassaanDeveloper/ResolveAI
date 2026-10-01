@@ -4,21 +4,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
-from app.core.config import settings
-
-
-def _allowed_origin(origin):
-    """Return the origin value to echo in Access-Control-Allow-Origin, or None.
-
-    Only exact matches against the configured allow-list are accepted. There is
-    intentionally no wildcard support: echoing "*" together with
-    Access-Control-Allow-Credentials is invalid per the CORS spec and unsafe.
-    """
-    if not origin:
-        return None
-    if origin not in settings.CORS_ORIGINS:
-        return None
-    return origin
+from app.core.config import allowed_origin
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
@@ -27,7 +13,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
         request.state.request_id = request_id
 
         origin = request.headers.get("origin")
-        allowed = _allowed_origin(origin)
+        allowed = allowed_origin(origin)
 
         if request.method == "OPTIONS" and allowed:
             response = Response(status_code=200)

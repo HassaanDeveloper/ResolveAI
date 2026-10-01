@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 
 
 class Settings(BaseSettings):
@@ -25,3 +25,16 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def allowed_origin(origin: Optional[str]) -> Optional[str]:
+    """Return `origin` if it appears in CORS_ORIGINS, otherwise None.
+
+    Single source of truth for the CORS allow-list. Both the middleware and the
+    exception handlers must gate on this: a handler that reflects the incoming
+    Origin unconditionally would hand any site a credentialed CORS grant on
+    every error response.
+    """
+    if not origin:
+        return None
+    return origin if origin in settings.CORS_ORIGINS else None

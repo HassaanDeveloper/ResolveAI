@@ -2,6 +2,30 @@ from typing import Any, Dict, Optional
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
+from app.core.config import allowed_origin
+
+
+def _cors_headers(request: Request) -> Dict[str, str]:
+    """CORS headers for an error response, gated on the configured allow-list.
+
+    Returning no CORS headers for a disallowed origin is the correct outcome:
+    the browser then blocks the response instead of handing the caller a
+    credentialed cross-origin grant.
+    """
+    headers = {"X-Request-ID": getattr(request.state, "request_id", "")}
+    allowed = allowed_origin(request.headers.get("origin"))
+    if allowed:
+        headers.update(
+            {
+                "Access-Control-Allow-Origin": allowed,
+                "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-ID",
+                "Access-Control-Allow-Credentials": "true",
+                "Vary": "Origin",
+            }
+        )
+    return headers
+
 
 class ResolveAIException(Exception):
     def __init__(
@@ -59,7 +83,6 @@ class ApprovalRequiredError(ResolveAIException):
 
 
 async def resolveai_exception_handler(request: Request, exc: ResolveAIException) -> JSONResponse:
-    origin = request.headers.get("origin", "http://localhost:3000")
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -69,18 +92,11 @@ async def resolveai_exception_handler(request: Request, exc: ResolveAIException)
                 "details": exc.details,
             }
         },
-        headers={
-            "X-Request-ID": getattr(request.state, "request_id", ""),
-            "Access-Control-Allow-Origin": origin,
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-ID",
-            "Access-Control-Allow-Credentials": "true",
-        },
+        headers=_cors_headers(request),
     )
 
 
 async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    origin = request.headers.get("origin", "http://localhost:3000")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -90,11 +106,5 @@ async def generic_exception_handler(request: Request, exc: Exception) -> JSONRes
                 "details": {},
             }
         },
-        headers={
-            "X-Request-ID": getattr(request.state, "request_id", ""),
-            "Access-Control-Allow-Origin": origin,
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Request-ID",
-            "Access-Control-Allow-Credentials": "true",
-        },
+        headers=_cors_headers(request),
     )
